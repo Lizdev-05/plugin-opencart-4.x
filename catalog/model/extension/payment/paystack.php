@@ -17,7 +17,7 @@ class ModelExtensionPaymentPaystack extends Model
             $status = false;
         }
         
-        // Paystack only switches NGN, GHS, USD, and ZAR for now
+        // Paystack only switches NGN, GHS, USD, ZAR, KES, EGP, and CIV for now
         if ($status && (!in_array(
             strtoupper($this->config->get('config_currency')),
             [
@@ -25,22 +25,33 @@ class ModelExtensionPaymentPaystack extends Model
                 'GHS',
                 'USD',
                 'ZAR'
+                'KES',
+                'EGP',
+                'CIV'
             ]
         ))
         ) {
             $status = true;
         }
 
-        $method_data = array();
 
-        if ($status) {
-            $method_data = array(
-                'code'       => 'paystack',
-                'title'      => $this->language->get('text_title'),
-                'terms'      => '',
-                'sort_order' => $this->config->get('payment_paystack_sort_order')
-            );
-        }
+        $method_data = [];
+        $option_data = [];
+
+
+       if ($status) {
+        $option_data['paystack'] = [
+        'code' => 'paystack.paystack',
+        'name' => $this->language->get('heading_title')
+        ];
+
+       $method_data = [
+        'code'       => 'paystack',
+        'name'       => $this->language->get('heading_title'),
+        'option'     => $option_data,
+        'sort_order' => $this->config->get('payment_paystack_sort_order')
+       ];
+     }
 
         return $method_data;
     }
